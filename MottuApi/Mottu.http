@@ -1,0 +1,60 @@
+### 🔹 Criar um novo Pátio
+POST http://localhost:5026/api/patio
+Content-Type: application/json
+
+{
+  "nome": "Pátio Central"
+}
+
+###
+
+### 🔹 Listar todos os Pátios
+GET http://localhost:5026/api/patio
+Accept: application/json
+
+###
+
+### 🔹 Criar uma nova Zona vinculada ao Pátio (substitua o Guid pelo retorno real do pátio acima)
+POST http://localhost:5026/api/zona
+Content-Type: application/json
+
+{
+  "nome": "Zona A",
+  "patioId": "23510d07-64dc-40ac-8f5b-d29a995de779"
+}
+
+###
+
+### 🔹 Listar todas as Zonas
+GET http://localhost:5026/api/zona
+Accept: application/json
+
+###
+
+### 🔹 Criar uma nova Moto vinculada à Zona (substitua o Guid pelo retorno real da zona acima)
+POST http://localhost:5026/api/mottu
+Content-Type: application/json
+
+{
+  "modelo": "CG 160 Fan",
+  "placa": "XYZ1D23",
+  "zonaId": "3"
+}
+
+###
+
+### 🔹 Listar todas as Motos
+GET http://localhost:5026/api/mottu
+Accept: application/json
+
+###
+
+### 🔹 Buscar Moto por ID
+GET http://localhost:5026/api/mottu/GUID-DA-MOTO
+Accept: application/json
+
+###
+
+### 🔹 Deletar Moto por ID
+DELETE http://localhost:5026/api/mottu/GUID-DA-MOTO
+Accept: application/json
