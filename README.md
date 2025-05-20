@@ -47,6 +47,46 @@ O projeto utiliza migrations para versionamento de banco de dados.
 
 Para executar as requisições manualmente, utilize o arquivo Mottu.http.
 
+Extra:
+
+## ⚙️ Tecnologias Utilizadas
+
+- ASP.NET Core 9.0
+- Entity Framework Core 9
+- Oracle Database
+- Swagger / OpenAPI
+- C# moderno (`required`, `Guid`, `nullable`, etc.)
+  
+## 📌 Endpoints Principais
+
+### 🔸 Moto
+
+| Verbo | Rota                        | Descrição                |
+|-------|-----------------------------|--------------------------|
+| GET   | `/api/mottu`               | Lista todas as motos     |
+| GET   | `/api/mottu/{id}`          | Busca moto por ID        |
+| POST  | `/api/mottu`               | Cria uma nova moto       |
+| PUT   | `/api/mottu`               | Atualiza uma moto        |
+| DELETE| `/api/mottu/{id}`          | Remove uma moto por ID   |
+
+### 🔸 Zona
+
+| Verbo | Rota                        | Descrição                         |
+|-------|-----------------------------|-----------------------------------|
+| GET   | `/api/zona`                | Lista todas as zonas              |
+| GET   | `/api/zona?patioId={guid}` | Lista zonas de um pátio específico |
+| GET   | `/api/zona/{id}`           | Busca zona por ID                 |
+| POST  | `/api/zona`                | Cria uma nova zona                |
+
+### 🔸 Pátio
+
+| Verbo | Rota                        | Descrição             |
+|-------|-----------------------------|-----------------------|
+| GET   | `/api/patio`              | Lista todos os pátios |
+| GET   | `/api/patio/{id}`         | Busca pátio por ID    |
+| POST  | `/api/patio`              | Cria um novo pátio    |
+
+
 Autor:
 
 Henrique Maciel
