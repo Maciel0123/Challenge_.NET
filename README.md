@@ -27,19 +27,22 @@ Este projeto consiste em uma **API RESTful** desenvolvida com **ASP.NET Core**, 
 ## 🛠️ Como Executar Localmente
 
 1. Clone o repositório:
+```
 git clone https://github.com/Maciel0123/Challenge_.NET.git
+```
+3. Abra a solução no Visual Studio ou VSCode.
 
-2. Abra a solução no Visual Studio ou VSCode.
+4. Atualize a connection string para o Oracle no appsettings.json ou na ApplicationDbContextFactory.cs.
 
-3. Atualize a connection string para o Oracle no appsettings.json ou na ApplicationDbContextFactory.cs.
-
-4. Gere o banco de dados (caso necessário):
-Gere o banco de dados (caso necessário):
-
-5. Rode o projeto WebAPI:
+5. Gere o banco de dados (caso necessário):
+```
+dotnet ef database update --project MottuData
+```
+7. Rode o projeto WebAPI:
+```
 dotnet run --project MottuApi
-
-6. Acesse o Swagger:
+```
+9. Acesse o Swagger:
 https://localhost:{porta}/swagger
 
 📎 Observações
@@ -87,6 +90,8 @@ Extra:
 | POST  | `/api/patio`              | Cria um novo pátio    |
 
 
-Autor:
+Integrantes:
 
-Henrique Maciel
+Gabriela Moguinho Gonçalves - RM556143;
+Henrique Maciel - RM556480;
+Mariana Christina Rodrigues Fernandes - RM554773;
