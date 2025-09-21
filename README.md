@@ -4,25 +4,38 @@ Este projeto consiste em uma **API RESTful** desenvolvida com **ASP.NET Core**, 
 
 ---
 
+## 🎯 Entidades do Domínio
+
+As 3 entidades principais foram escolhidas por refletirem diretamente o fluxo logístico da empresa Mottu:
+
+- **Moto**: representa o ativo principal da empresa. Cada moto possui modelo, placa e está alocada em uma Zona.
+- **Zona**: representa uma subdivisão operacional de um Pátio, usada para organização física e controle de alocação das motos.
+- **Pátio**: estrutura física onde as motos são armazenadas. Cada pátio contém uma ou mais Zonas.
+
+---
+
 ## 🚀 Funcionalidades
 
-- Cadastro de Motos com associação à Zona
-- Cadastro de Zonas vinculadas a um Pátio
-- Cadastro de Pátios
-- Relacionamentos entre entidades via EF Core
-- Consultas com filtros (`QueryParams` e `PathParams`)
+- CRUD completo para Motos, Zonas e Pátios
+- Associação de Motos a Zonas e de Zonas a Pátios
+- Consultas com filtros (`QueryParams`, `PathParams`)
+- Paginação (`?page=1&pageSize=10`)
+- HATEOAS nas respostas `GET /{id}`
 - Retornos HTTP adequados (`200 OK`, `201 Created`, `204 No Content`, etc.)
+- Documentação via Swagger
 
 ---
 
 ## 🧱 Estrutura do Projeto
 
- Challenge_.NET
-├── MottuApi # Camada de apresentação (Controllers + Program.cs)
-      ├── Mottu.http # Requisições de teste para Postman ou REST Client
-├── MottuBusiness # Lógica de negócio e interfaces dos serviços
-├── MottuData # Acesso a dados e configuração do EF Core + Oracle
+Challenge_.NET<br>
+├── MottuApi # Camada de apresentação (Controllers + Program.cs)<br>
+├── Mottu.http # Requisições de teste para Postman ou REST Client<br>
+├── MottuBusiness # Lógica de negócio e interfaces dos serviços<br>
+├── MottuData # Acesso a dados e configuração do EF Core + Oracle<br>
 ├── MottuModel # Modelos de dados (entidades)
+
+---
 
 ## 🛠️ Como Executar Localmente
 
@@ -45,10 +58,15 @@ dotnet run --project MottuApi
 9. Acesse o Swagger:
 https://localhost:{porta}/swagger
 
-📎 Observações
-O projeto utiliza migrations para versionamento de banco de dados.
+##🧪 Testes de Requisições
 
-Para executar as requisições manualmente, utilize o arquivo Mottu.http.
+Você pode testar os endpoints usando:
+
+Swagger UI (/swagger)
+
+REST Client (Mottu.http)
+
+Postman
 
 Extra:
 
@@ -89,9 +107,16 @@ Extra:
 | GET   | `/api/patio/{id}`         | Busca pátio por ID    |
 | POST  | `/api/patio`              | Cria um novo pátio    |
 
+📎 Observações
+
+- O projeto utiliza migrations para versionamento do banco de dados.
+
+- Todas as respostas GET /{id} retornam links de ação no padrão HATEOAS.
+
+- O código segue boas práticas de arquitetura em camadas.
 
 Integrantes:
 
-Gabriela Moguinho Gonçalves - RM556143;
-Henrique Maciel - RM556480;
-Mariana Christina Rodrigues Fernandes - RM554773;
+Gabriela Moguinho Gonçalves - RM556143<br>
+Henrique Maciel - RM556480<br>
+Mariana Christina Rodrigues Fernandes - RM554773
