@@ -13,7 +13,16 @@ namespace MottuBusiness
             _context = context;
         }
 
-        public List<MottuModel.Patio> ListarTodos() => _context.Patios.Include(p => p.Zonas).ToList();
+        public List<Patio> ListarTodos() => _context.Patios.Include(p => p.Zonas).ToList();
+
+        public List<Patio> ListarPaginado(int page, int pageSize)
+        {
+            return _context.Patios
+                .Include(p => p.Zonas)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+        }
 
         public Patio? ObterPorId(Guid id) => _context.Patios.Include(p => p.Zonas).FirstOrDefault(p => p.Id == id);
 
@@ -22,6 +31,27 @@ namespace MottuBusiness
             _context.Patios.Add(patio);
             _context.SaveChanges();
             return patio;
+        }
+
+        public bool Atualizar(Patio patio)
+        {
+            var existente = _context.Patios.Find(patio.Id);
+            if (existente == null) return false;
+
+            existente.Nome = patio.Nome;
+
+            _context.SaveChanges();
+            return true;
+        }
+
+        public bool Remover(Guid id)
+        {
+            var patio = _context.Patios.Find(id);
+            if (patio == null) return false;
+
+            _context.Patios.Remove(patio);
+            _context.SaveChanges();
+            return true;
         }
     }
 }

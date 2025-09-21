@@ -1,6 +1,5 @@
 using MottuModel;
 using MottuData;
-using Microsoft.EntityFrameworkCore;
 
 namespace MottuBusiness;
 
@@ -13,31 +12,38 @@ public class MottuService : IMottuService
         _context = context;
     }
 
-    public List<MottuModel.Moto> ListarTodos() =>
-        _context.Motos.ToList(); // Retorna a lista de todas as Mottu
+    public List<Moto> ListarTodos() =>
+        _context.Motos.ToList();
 
-    public MottuModel.Moto? ObterPorId(string id)
+    public List<Moto> ListarPaginado(int page, int pageSize) =>
+        _context.Motos
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+    public Moto? ObterPorId(string id)
     {
-        if (!Guid.TryParse(id, out var parsedId)) // Converte string para Guid
-            return null; // Se a conversão falhar, retorna null
+        if (!Guid.TryParse(id, out var parsedId))
+            return null;
 
-        return _context.Motos.FirstOrDefault(c => c.Id == parsedId); // Comparando Guid com Guid
+        return _context.Motos.FirstOrDefault(c => c.Id == parsedId);
     }
 
-    public MottuModel.Moto Criar(MottuModel.Moto motos)
+    public Moto Criar(Moto moto)
     {
-        _context.Motos.Add(motos);
+        _context.Motos.Add(moto);
         _context.SaveChanges();
-        return motos;
+        return moto;
     }
 
-    public bool Atualizar(MottuModel.Moto motos)
+    public bool Atualizar(Moto moto)
     {
-        var existente = _context.Motos.Find(motos.Id);
+        var existente = _context.Motos.Find(moto.Id);
         if (existente == null) return false;
 
-        existente.Modelo = motos.Modelo;
-        existente.Placa = motos.Placa;
+        existente.Modelo = moto.Modelo;
+        existente.Placa = moto.Placa;
+        existente.ZonaId = moto.ZonaId;
 
         _context.SaveChanges();
         return true;
@@ -45,10 +51,10 @@ public class MottuService : IMottuService
 
     public bool Remover(string id)
     {
-        if (!Guid.TryParse(id, out var parsedId)) // Verifica se o id é um Guid válido
+        if (!Guid.TryParse(id, out var parsedId))
             return false;
 
-        var moto = _context.Motos.Find(parsedId); // Busca pela chave Guid
+        var moto = _context.Motos.Find(parsedId);
         if (moto == null) return false;
 
         _context.Motos.Remove(moto);

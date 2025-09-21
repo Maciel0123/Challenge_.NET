@@ -15,11 +15,34 @@ public class MottuController(IMottuService mottuService) : ControllerBase
         return motos.Count == 0 ? NoContent() : Ok(motos);
     }
 
+    [HttpGet("paginado")]
+    public IActionResult GetPaginado([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        var motos = mottuService.ListarPaginado(page, pageSize);
+        return motos.Count == 0 ? NoContent() : Ok(motos);
+    }
+
     [HttpGet("{id}")]
     public IActionResult Get(string id)
     {
         var moto = mottuService.ObterPorId(id);
-        return moto == null ? NotFound() : Ok(moto);
+        if (moto == null) return NotFound();
+
+        var response = new
+        {
+            moto.Id,
+            moto.Modelo,
+            moto.Placa,
+            moto.ZonaId,
+            links = new[]
+            {
+                new { rel = "self", href = Url.Action(nameof(Get), new { id = moto.Id }), method = "GET" },
+                new { rel = "update", href = Url.Action(nameof(Put)), method = "PUT" },
+                new { rel = "delete", href = Url.Action(nameof(Delete), new { id = moto.Id }), method = "DELETE" }
+            }
+        };
+
+        return Ok(response);
     }
 
     [HttpPost]

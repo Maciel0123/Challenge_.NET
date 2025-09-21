@@ -1,51 +1,76 @@
+// ZonaController.cs (completo com HATEOAS + paginação)
 using Microsoft.AspNetCore.Mvc;
 using MottuBusiness;
 using MottuModel;
 
-namespace MottuApi.Controllers
+namespace MottuApi.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class ZonaController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ZonaController : ControllerBase
+    private readonly IZonaService _service;
+
+    public ZonaController(IZonaService service)
     {
-        private readonly IZonaService _service;
+        _service = service;
+    }
 
-        public ZonaController(IZonaService service)
-        {
-            _service = service;
-        }
+    [HttpGet]
+    public IActionResult Get([FromQuery] Guid? patioId)
+    {
+        var zonas = patioId.HasValue ? _service.ListarPorPatio(patioId.Value) : _service.ListarTodos();
+        return zonas.Any() ? Ok(zonas) : NoContent();
+    }
 
-        // 🔹 GET com filtro opcional por PatioId
-        [HttpGet]
-        public IActionResult Get([FromQuery] Guid? patioId)
+    [HttpGet("paginado")]
+    public IActionResult GetPaginado([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        var zonas = _service.ListarPaginado(page, pageSize);
+        return zonas.Count == 0 ? NoContent() : Ok(zonas);
+    }
+
+    [HttpGet("{id}")]
+    public IActionResult Get(int id)
+    {
+        var zona = _service.ObterPorId(id);
+        if (zona == null) return NotFound();
+
+        var response = new
         {
-            if (patioId.HasValue)
+            zona.Id,
+            zona.Nome,
+            zona.PatioId,
+            links = new[]
             {
-                var zonasFiltradas = _service.ListarPorPatio(patioId.Value);
-                return zonasFiltradas.Any() ? Ok(zonasFiltradas) : NoContent();
+                new { rel = "self", href = Url.Action(nameof(Get), new { id = zona.Id }), method = "GET" },
+                new { rel = "update", href = Url.Action(nameof(Put)), method = "PUT" },
+                new { rel = "delete", href = Url.Action(nameof(Delete), new { id = zona.Id }), method = "DELETE" }
             }
+        };
 
-            var zonas = _service.ListarTodos();
-            return zonas.Any() ? Ok(zonas) : NoContent();
-        }
+        return Ok(response);
+    }
 
-        // 🔹 GET por ID da zona
-        [HttpGet("{id}")]
-        public IActionResult Get(int id)
-        {
-            var zona = _service.ObterPorId(id);
-            return zona == null ? NotFound() : Ok(zona);
-        }
+    [HttpPost]
+    public IActionResult Post([FromBody] Zona zona)
+    {
+        if (string.IsNullOrWhiteSpace(zona.Nome)) return BadRequest("Nome da zona é obrigatório.");
+        var criada = _service.Criar(zona);
+        return CreatedAtAction(nameof(Get), new { id = criada.Id }, criada);
+    }
 
-        // 🔹 POST zona
-        [HttpPost]
-        public IActionResult Post([FromBody] Zona zona)
-        {
-            if (string.IsNullOrWhiteSpace(zona.Nome))
-                return BadRequest("Nome da zona é obrigatório.");
+    [HttpPut]
+    public IActionResult Put([FromBody] Zona zona)
+    {
+        var atualizada = _service.Atualizar(zona);
+        return atualizada ? NoContent() : NotFound();
+    }
 
-            var criada = _service.Criar(zona);
-            return CreatedAtAction(nameof(Get), new { id = criada.Id }, criada);
-        }
+    [HttpDelete("{id}")]
+    public IActionResult Delete(int id)
+    {
+        var removida = _service.Remover(id);
+        return removida ? NoContent() : NotFound();
     }
 }

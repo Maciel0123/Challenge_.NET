@@ -14,7 +14,36 @@ Accept: application/json
 
 ###
 
-### 🔹 Criar uma nova Zona vinculada ao Pátio (substitua o Guid pelo retorno real do pátio acima)
+### 🔹 Listar Pátios com paginação
+GET http://localhost:5026/api/patio/paginado?page=1&pageSize=5
+Accept: application/json
+
+###
+
+### 🔹 Buscar Pátio por ID (com HATEOAS)
+GET http://localhost:5026/api/patio/23510d07-64dc-40ac-8f5b-d29a995de779
+Accept: application/json
+
+###
+
+### 🔹 Atualizar Pátio
+PUT http://localhost:5026/api/patio
+Content-Type: application/json
+
+{
+  "id": "23510d07-64dc-40ac-8f5b-d29a995de779",
+  "nome": "Pátio Central Atualizado"
+}
+
+###
+
+### 🔹 Deletar Pátio por ID
+DELETE http://localhost:5026/api/patio/23510d07-64dc-40ac-8f5b-d29a995de779
+Accept: application/json
+
+###
+
+### 🔹 Criar uma nova Zona vinculada ao Pátio
 POST http://localhost:5026/api/zona
 Content-Type: application/json
 
@@ -31,14 +60,44 @@ Accept: application/json
 
 ###
 
-### 🔹 Criar uma nova Moto vinculada à Zona (substitua o Guid pelo retorno real da zona acima)
+### 🔹 Listar Zonas com paginação
+GET http://localhost:5026/api/zona/paginado?page=1&pageSize=5
+Accept: application/json
+
+###
+
+### 🔹 Buscar Zona por ID (com HATEOAS)
+GET http://localhost:5026/api/zona/1
+Accept: application/json
+
+###
+
+### 🔹 Atualizar Zona
+PUT http://localhost:5026/api/zona
+Content-Type: application/json
+
+{
+  "id": 1,
+  "nome": "Zona A Atualizada",
+  "patioId": "23510d07-64dc-40ac-8f5b-d29a995de779"
+}
+
+###
+
+### 🔹 Deletar Zona por ID
+DELETE http://localhost:5026/api/zona/1
+Accept: application/json
+
+###
+
+### 🔹 Criar uma nova Moto vinculada à Zona
 POST http://localhost:5026/api/mottu
 Content-Type: application/json
 
 {
   "modelo": "CG 160 Fan",
   "placa": "XYZ1D23",
-  "zonaId": "3"
+  "zonaId": 1
 }
 
 ###
@@ -49,9 +108,28 @@ Accept: application/json
 
 ###
 
-### 🔹 Buscar Moto por ID
+### 🔹 Listar Motos com paginação
+GET http://localhost:5026/api/mottu/paginado?page=1&pageSize=5
+Accept: application/json
+
+###
+
+### 🔹 Buscar Moto por ID (com HATEOAS)
 GET http://localhost:5026/api/mottu/GUID-DA-MOTO
 Accept: application/json
+
+###
+
+### 🔹 Atualizar Moto
+PUT http://localhost:5026/api/mottu
+Content-Type: application/json
+
+{
+  "id": "GUID-DA-MOTO",
+  "modelo": "CG 160 Fan Atualizada",
+  "placa": "XYZ1D23",
+  "zonaId": 1
+}
 
 ###
 

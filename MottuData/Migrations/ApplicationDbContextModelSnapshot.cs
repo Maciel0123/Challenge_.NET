@@ -30,11 +30,13 @@ namespace MottuData.Migrations
 
                     b.Property<string>("Modelo")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
+                        .HasColumnType("NVARCHAR2(2000)")
+                        .HasColumnName("MODELO");
 
                     b.Property<string>("Placa")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
+                        .HasColumnType("NVARCHAR2(2000)")
+                        .HasColumnName("PLACA");
 
                     b.Property<int>("ZonaId")
                         .HasColumnType("NUMBER(10)");
@@ -43,7 +45,7 @@ namespace MottuData.Migrations
 
                     b.HasIndex("ZonaId");
 
-                    b.ToTable("Motos");
+                    b.ToTable("MOTOS", (string)null);
                 });
 
             modelBuilder.Entity("MottuModel.Patio", b =>
@@ -54,11 +56,12 @@ namespace MottuData.Migrations
 
                     b.Property<string>("Nome")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
+                        .HasColumnType("NVARCHAR2(2000)")
+                        .HasColumnName("NOME");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Patios");
+                    b.ToTable("PATIOS", (string)null);
                 });
 
             modelBuilder.Entity("MottuModel.Zona", b =>
@@ -71,7 +74,8 @@ namespace MottuData.Migrations
 
                     b.Property<string>("Nome")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
+                        .HasColumnType("NVARCHAR2(2000)")
+                        .HasColumnName("NOME");
 
                     b.Property<Guid?>("PatioId")
                         .HasColumnType("RAW(16)");
@@ -80,7 +84,7 @@ namespace MottuData.Migrations
 
                     b.HasIndex("PatioId");
 
-                    b.ToTable("Zonas");
+                    b.ToTable("ZONAS", (string)null);
                 });
 
             modelBuilder.Entity("MottuModel.Moto", b =>
@@ -89,7 +93,8 @@ namespace MottuData.Migrations
                         .WithMany("Motos")
                         .HasForeignKey("ZonaId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_MOTO_ZONA");
 
                     b.Navigation("Zona");
                 });
@@ -98,7 +103,8 @@ namespace MottuData.Migrations
                 {
                     b.HasOne("MottuModel.Patio", "Patio")
                         .WithMany("Zonas")
-                        .HasForeignKey("PatioId");
+                        .HasForeignKey("PatioId")
+                        .HasConstraintName("FK_ZONA_PATIO");
 
                     b.Navigation("Patio");
                 });
