@@ -1,4 +1,3 @@
-// ZonaController.cs (completo com HATEOAS + paginação)
 using Microsoft.AspNetCore.Mvc;
 using MottuBusiness;
 using MottuModel;
@@ -16,61 +15,76 @@ public class ZonaController : ControllerBase
         _service = service;
     }
 
+    /// <summary>
+    /// Lista todas as zonas com seus relacionamentos.
+    /// </summary>
     [HttpGet]
-    public IActionResult Get([FromQuery] Guid? patioId)
+    public ActionResult<List<Zona>> ListarTodos()
     {
-        var zonas = patioId.HasValue ? _service.ListarPorPatio(patioId.Value) : _service.ListarTodos();
-        return zonas.Any() ? Ok(zonas) : NoContent();
+        return Ok(_service.ListarTodos());
     }
 
+    /// <summary>
+    /// Lista zonas com paginação.
+    /// </summary>
     [HttpGet("paginado")]
-    public IActionResult GetPaginado([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    public ActionResult<List<Zona>> ListarPaginado(int page = 1, int pageSize = 10)
     {
-        var zonas = _service.ListarPaginado(page, pageSize);
-        return zonas.Count == 0 ? NoContent() : Ok(zonas);
+        return Ok(_service.ListarPaginado(page, pageSize));
     }
 
+    /// <summary>
+    /// Lista as zonas de um determinado pátio.
+    /// </summary>
+    [HttpGet("patio/{patioId}")]
+    public ActionResult<List<Zona>> ListarPorPatio(Guid patioId)
+    {
+        return Ok(_service.ListarPorPatio(patioId));
+    }
+
+    /// <summary>
+    /// Retorna uma zona pelo seu ID.
+    /// </summary>
     [HttpGet("{id}")]
-    public IActionResult Get(int id)
+    public ActionResult<Zona> ObterPorId(int id)
     {
         var zona = _service.ObterPorId(id);
         if (zona == null) return NotFound();
 
-        var response = new
-        {
-            zona.Id,
-            zona.Nome,
-            zona.PatioId,
-            links = new[]
-            {
-                new { rel = "self", href = Url.Action(nameof(Get), new { id = zona.Id }), method = "GET" },
-                new { rel = "update", href = Url.Action(nameof(Put)), method = "PUT" },
-                new { rel = "delete", href = Url.Action(nameof(Delete), new { id = zona.Id }), method = "DELETE" }
-            }
-        };
-
-        return Ok(response);
+        return Ok(zona);
     }
 
+    /// <summary>
+    /// Cria uma nova zona.
+    /// </summary>
     [HttpPost]
-    public IActionResult Post([FromBody] Zona zona)
+    public ActionResult<Zona> Criar(Zona zona)
     {
-        if (string.IsNullOrWhiteSpace(zona.Nome)) return BadRequest("Nome da zona é obrigatório.");
         var criada = _service.Criar(zona);
-        return CreatedAtAction(nameof(Get), new { id = criada.Id }, criada);
+        return CreatedAtAction(nameof(ObterPorId), new { id = criada.Id }, criada);
     }
 
+    /// <summary>
+    /// Atualiza uma zona existente.
+    /// </summary>
     [HttpPut]
-    public IActionResult Put([FromBody] Zona zona)
+    public IActionResult Atualizar(Zona zona)
     {
-        var atualizada = _service.Atualizar(zona);
-        return atualizada ? NoContent() : NotFound();
+        var atualizado = _service.Atualizar(zona);
+        if (!atualizado) return NotFound();
+
+        return NoContent();
     }
 
+    /// <summary>
+    /// Remove uma zona pelo ID.
+    /// </summary>
     [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    public IActionResult Remover(int id)
     {
         var removida = _service.Remover(id);
-        return removida ? NoContent() : NotFound();
+        if (!removida) return NotFound();
+
+        return NoContent();
     }
 }

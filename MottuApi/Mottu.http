@@ -15,13 +15,13 @@ Accept: application/json
 ###
 
 ### 🔹 Listar Pátios com paginação
-GET http://localhost:5026/api/patio/paginado?page=1&pageSize=5
+GET http://localhost:5026/api/patio/paginado?page=2&pageSize=1
 Accept: application/json
 
 ###
 
 ### 🔹 Buscar Pátio por ID (com HATEOAS)
-GET http://localhost:5026/api/patio/23510d07-64dc-40ac-8f5b-d29a995de779
+GET http://localhost:5026/api/patio/1ef9fde7-2548-4296-ba2b-67db3da55e5d
 Accept: application/json
 
 ###

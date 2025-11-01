@@ -1,5 +1,6 @@
 using MottuModel;
 using MottuData;
+using Microsoft.EntityFrameworkCore;
 
 namespace MottuBusiness;
 
@@ -15,11 +16,14 @@ public class MottuService : IMottuService
     public List<Moto> ListarTodos() =>
         _context.Motos.ToList();
 
-    public List<Moto> ListarPaginado(int page, int pageSize) =>
-        _context.Motos
+    public List<Moto> ListarPaginado(int page, int pageSize)
+    {
+        return _context.Motos
+            .AsNoTracking()
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToList();
+    }
 
     public Moto? ObterPorId(string id)
     {

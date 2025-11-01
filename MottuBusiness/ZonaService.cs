@@ -1,4 +1,3 @@
-// ZonaService.cs (completo com paginação)
 using MottuModel;
 using MottuData;
 using Microsoft.EntityFrameworkCore;
@@ -20,24 +19,23 @@ namespace MottuBusiness
                 .Include(z => z.Motos)
                 .ToList();
 
-        public List<Zona> ListarPaginado(int page, int pageSize) =>
-            _context.Zonas
-                .Include(z => z.Patio)
-                .Include(z => z.Motos)
+        public List<Zona> ListarPaginado(int page, int pageSize)
+        {
+            return _context.Zonas
+                .AsNoTracking()
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
+        }
 
         public List<Zona> ListarPorPatio(Guid patioId) =>
-            _context.Zonas
-                .Where(z => z.PatioId == patioId)
-                .ToList();
+            _context.Zonas.Where(z => z.PatioId == patioId).ToList();
 
-        public Zona ObterPorId(int id) =>
+        public Zona? ObterPorId(int id) =>
             _context.Zonas
                 .Include(z => z.Motos)
                 .Include(z => z.Patio)
-                .FirstOrDefault(z => z.Id == id)!;
+                .FirstOrDefault(z => z.Id == id);
 
         public Zona Criar(Zona zona)
         {

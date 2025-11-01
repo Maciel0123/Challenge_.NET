@@ -18,7 +18,7 @@ namespace MottuBusiness
         public List<Patio> ListarPaginado(int page, int pageSize)
         {
             return _context.Patios
-                .Include(p => p.Zonas)
+                .AsNoTracking()
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();

@@ -1,70 +1,81 @@
 using Microsoft.AspNetCore.Mvc;
 using MottuBusiness;
-using Model = MottuModel.Moto;
+using MottuModel;
 
-namespace MottuApi.Controller;
+namespace MottuApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class MottuController(IMottuService mottuService) : ControllerBase
+public class MotoController : ControllerBase
 {
+    private readonly IMottuService _service;
+
+    public MotoController(IMottuService service)
+    {
+        _service = service;
+    }
+
+    /// <summary>
+    /// Lista todas as motos.
+    /// </summary>
     [HttpGet]
-    public IActionResult Get()
+    public ActionResult<List<Moto>> ListarTodos()
     {
-        var motos = mottuService.ListarTodos();
-        return motos.Count == 0 ? NoContent() : Ok(motos);
+        return Ok(_service.ListarTodos());
     }
 
+    /// <summary>
+    /// Lista motos com paginação.
+    /// </summary>
     [HttpGet("paginado")]
-    public IActionResult GetPaginado([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    public ActionResult<List<Moto>> ListarPaginado(int page = 1, int pageSize = 10)
     {
-        var motos = mottuService.ListarPaginado(page, pageSize);
-        return motos.Count == 0 ? NoContent() : Ok(motos);
+        return Ok(_service.ListarPaginado(page, pageSize));
     }
 
+    /// <summary>
+    /// Retorna uma moto por ID.
+    /// </summary>
     [HttpGet("{id}")]
-    public IActionResult Get(string id)
+    public ActionResult<Moto> ObterPorId(string id)
     {
-        var moto = mottuService.ObterPorId(id);
+        var moto = _service.ObterPorId(id);
         if (moto == null) return NotFound();
 
-        var response = new
-        {
-            moto.Id,
-            moto.Modelo,
-            moto.Placa,
-            moto.ZonaId,
-            links = new[]
-            {
-                new { rel = "self", href = Url.Action(nameof(Get), new { id = moto.Id }), method = "GET" },
-                new { rel = "update", href = Url.Action(nameof(Put)), method = "PUT" },
-                new { rel = "delete", href = Url.Action(nameof(Delete), new { id = moto.Id }), method = "DELETE" }
-            }
-        };
-
-        return Ok(response);
+        return Ok(moto);
     }
 
+    /// <summary>
+    /// Cria uma nova moto.
+    /// </summary>
     [HttpPost]
-    public IActionResult Post([FromBody] Model moto)
+    public ActionResult<Moto> Criar(Moto moto)
     {
-        if (string.IsNullOrWhiteSpace(moto.Modelo))
-            return BadRequest("Modelos é obrigatório.");
-        var criado = mottuService.Criar(moto);
-        return CreatedAtAction(nameof(Get), new { id = criado.Id }, criado);
+        var criada = _service.Criar(moto);
+        return CreatedAtAction(nameof(ObterPorId), new { id = criada.Id }, criada);
     }
 
+    /// <summary>
+    /// Atualiza os dados de uma moto.
+    /// </summary>
     [HttpPut]
-    public IActionResult Put([FromBody] Model moto)
+    public IActionResult Atualizar(Moto moto)
     {
-        if (moto == null)
-            return BadRequest("Dados inconsistentes.");
-        return mottuService.Atualizar(moto) ? NoContent() : NotFound();
+        var atualizado = _service.Atualizar(moto);
+        if (!atualizado) return NotFound();
+
+        return NoContent();
     }
 
+    /// <summary>
+    /// Remove uma moto pelo ID.
+    /// </summary>
     [HttpDelete("{id}")]
-    public IActionResult Delete(string id)
+    public IActionResult Remover(string id)
     {
-        return mottuService.Remover(id) ? NoContent() : NotFound();
+        var removido = _service.Remover(id);
+        if (!removido) return NotFound();
+
+        return NoContent();
     }
 }
