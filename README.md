@@ -56,7 +56,9 @@ dotnet ef database update --project MottuData
 dotnet run --project MottuApi
 ```
 9. Acesse o Swagger:
+```    
 https://localhost:{porta}/swagger
+```
 
 ##🧪 Testes de Requisições
 
@@ -82,38 +84,45 @@ Extra:
 
 ### 🔸 Moto
 
-| Verbo | Rota                        | Descrição                |
-|-------|-----------------------------|--------------------------|
-| GET   | `/api/mottu`               | Lista todas as motos     |
-| GET   | `/api/mottu/{id}`          | Busca moto por ID        |
-| POST  | `/api/mottu`               | Cria uma nova moto       |
-| PUT   | `/api/mottu`               | Atualiza uma moto        |
-| DELETE| `/api/mottu/{id}`          | Remove uma moto por ID   |
+| Verbo  | Rota                       | Descrição                              |
+|--------|----------------------------|----------------------------------------|
+| POST   | `/api/mottu`               | Criar uma nova Moto                   |
+| GET    | `/api/mottu`               | Listar todas as Motos                 |
+| GET    | `/api/mottu/{id}`          | Buscar Moto por ID                    |
+| GET    | `/api/mottu/paginado`      | Listar Motos com paginação            |
+| PUT    | `/api/mottu`               | Atualizar Moto                        |
+| DELETE | `/api/mottu/{id}`          | Deletar Moto por ID                   |
+
 
 ### 🔸 Zona
 
-| Verbo | Rota                        | Descrição                         |
-|-------|-----------------------------|-----------------------------------|
-| GET   | `/api/zona`                | Lista todas as zonas              |
-| GET   | `/api/zona?patioId={guid}` | Lista zonas de um pátio específico |
-| GET   | `/api/zona/{id}`           | Busca zona por ID                 |
-| POST  | `/api/zona`                | Cria uma nova zona                |
+| Verbo  | Rota                       | Descrição                             |
+|--------|----------------------------|---------------------------------------|
+| POST   | `/api/zona`                | Criar uma nova Zona                  |
+| GET    | `/api/zona`                | Listar todas as Zonas                |
+| GET    | `/api/zona?patioId={guid}` | Listar zonas de um pátio específico  |
+| GET    | `/api/zona/{id}`           | Buscar Zona por ID                   |
+| GET    | `/api/zona/paginado`       | Listar Zonas com paginação           |
+| PUT    | `/api/zona`                | Atualizar Zona                       |
+| DELETE | `/api/zona/{id}`           | Deletar Zona por ID                  |
 
 ### 🔸 Pátio
 
-| Verbo | Rota                        | Descrição             |
-|-------|-----------------------------|-----------------------|
-| GET   | `/api/patio`              | Lista todos os pátios |
-| GET   | `/api/patio/{id}`         | Busca pátio por ID    |
-| POST  | `/api/patio`              | Cria um novo pátio    |
+| Verbo  | Rota                       | Descrição                           |
+|--------|----------------------------|-------------------------------------|
+| POST   | `/api/patio`               | Criar um novo Pátio                |
+| GET    | `/api/patio`               | Listar todos os Pátios             |
+| GET    | `/api/patio/{id}`          | Buscar Pátio por ID                |
+| GET    | `/api/patio/paginado`      | Listar Pátios com paginação        |
+| PUT    | `/api/patio`               | Atualizar Pátio                    |
+| DELETE | `/api/patio/{id}`          | Deletar Pátio por ID               |
 
 📎 Observações
 
-- O projeto utiliza migrations para versionamento do banco de dados.
-
-- Todas as respostas GET /{id} retornam links de ação no padrão HATEOAS.
-
-- O código segue boas práticas de arquitetura em camadas.
+- O projeto utiliza **migrations** para versionamento do banco de dados.
+- Todas as respostas **GET /{id}** retornam links de ação no padrão **HATEOAS**.
+- O código segue boas práticas de **arquitetura em camadas**.
+- A **paginação** foi implementada nas rotas de listagem de **Pátios**, **Zonas** e **Motos** com os parâmetros `page` e `pageSize` para controle de quantidade de resultados por página.
 
 Integrantes:
 
