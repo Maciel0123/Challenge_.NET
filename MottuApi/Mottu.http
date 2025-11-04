@@ -1,138 +1,134 @@
+### 🔹 Gerar Token JWT
+POST https://localhost:7039/api/v1/auth/token
+Content-Type: application/json
+
+{
+  "username": "henrique",
+  "password": "123"
+}
+
+### COPIE O TOKEN GERADO E COLOQUE NO HEADER ABAIXO ###
+
+
 ### 🔹 Criar um novo Pátio
-POST http://localhost:5026/api/patio
+POST https://localhost:7039/api/v1/Patio
+Authorization: Bearer SEU_TOKEN_AQUI
 Content-Type: application/json
 
 {
   "nome": "Pátio Central"
 }
 
-###
+### Listar todos os Pátios
+GET https://localhost:7039/api/v1/Patio
+Authorization: Bearer SEU_TOKEN_AQUI
 
-### 🔹 Listar todos os Pátios
-GET http://localhost:5026/api/patio
-Accept: application/json
+### Listar Pátios com paginação
+GET https://localhost:7039/api/v1/Patio/paginado?page=1&pageSize=2
+Authorization: Bearer SEU_TOKEN_AQUI
 
-###
+### Buscar Pátio por ID
+GET https://localhost:7039/api/v1/Patio/{id}
+Authorization: Bearer SEU_TOKEN_AQUI
 
-### 🔹 Listar Pátios com paginação
-GET http://localhost:5026/api/patio/paginado?page=2&pageSize=1
-Accept: application/json
-
-###
-
-### 🔹 Buscar Pátio por ID (com HATEOAS)
-GET http://localhost:5026/api/patio/1ef9fde7-2548-4296-ba2b-67db3da55e5d
-Accept: application/json
-
-###
-
-### 🔹 Atualizar Pátio
-PUT http://localhost:5026/api/patio
+### Atualizar Pátio
+PUT https://localhost:7039/api/v1/Patio
+Authorization: Bearer SEU_TOKEN_AQUI
 Content-Type: application/json
 
 {
-  "id": "23510d07-64dc-40ac-8f5b-d29a995de779",
-  "nome": "Pátio Central Atualizado"
+  "id": "{id}",
+  "nome": "Patio Atualizado"
 }
 
-###
+### Deletar Pátio
+DELETE https://localhost:7039/api/v1/Patio/{id}
+Authorization: Bearer SEU_TOKEN_AQUI
 
-### 🔹 Deletar Pátio por ID
-DELETE http://localhost:5026/api/patio/23510d07-64dc-40ac-8f5b-d29a995de779
-Accept: application/json
 
-###
-
-### 🔹 Criar uma nova Zona vinculada ao Pátio
-POST http://localhost:5026/api/zona
+### Criar Zona
+POST https://localhost:7039/api/v1/Zona
+Authorization: Bearer SEU_TOKEN_AQUI
 Content-Type: application/json
 
 {
   "nome": "Zona A",
-  "patioId": "23510d07-64dc-40ac-8f5b-d29a995de779"
+  "patioId": "{idPatio}"
 }
 
-###
+### Listar Zonas
+GET https://localhost:7039/api/v1/Zona
+Authorization: Bearer SEU_TOKEN_AQUI
 
-### 🔹 Listar todas as Zonas
-GET http://localhost:5026/api/zona
-Accept: application/json
+### Listar Zonas com paginação
+GET https://localhost:7039/api/v1/Zona/paginado?page=1&pageSize=5
+Authorization: Bearer SEU_TOKEN_AQUI
 
-###
+### Buscar Zona por ID
+GET https://localhost:7039/api/v1/Zona/1
+Authorization: Bearer SEU_TOKEN_AQUI
 
-### 🔹 Listar Zonas com paginação
-GET http://localhost:5026/api/zona/paginado?page=1&pageSize=5
-Accept: application/json
-
-###
-
-### 🔹 Buscar Zona por ID (com HATEOAS)
-GET http://localhost:5026/api/zona/1
-Accept: application/json
-
-###
-
-### 🔹 Atualizar Zona
-PUT http://localhost:5026/api/zona
+### Atualizar Zona
+PUT https://localhost:7039/api/v1/Zona
+Authorization: Bearer SEU_TOKEN_AQUI
 Content-Type: application/json
 
 {
   "id": 1,
-  "nome": "Zona A Atualizada",
-  "patioId": "23510d07-64dc-40ac-8f5b-d29a995de779"
+  "nome": "Zona Atualizada",
+  "patioId": "{idPatio}"
 }
 
-###
+### Deletar Zona
+DELETE https://localhost:7039/api/v1/Zona/1
+Authorization: Bearer SEU_TOKEN_AQUI
 
-### 🔹 Deletar Zona por ID
-DELETE http://localhost:5026/api/zona/1
-Accept: application/json
 
-###
-
-### 🔹 Criar uma nova Moto vinculada à Zona
-POST http://localhost:5026/api/mottu
+### Criar Moto
+POST https://localhost:7039/api/v1/Moto
+Authorization: Bearer SEU_TOKEN_AQUI
 Content-Type: application/json
 
 {
   "modelo": "CG 160 Fan",
-  "placa": "XYZ1D23",
+  "placa": "XYZ1B23",
   "zonaId": 1
 }
 
-###
+### Listar Motos
+GET https://localhost:7039/api/v1/Moto
+Authorization: Bearer SEU_TOKEN_AQUI
 
-### 🔹 Listar todas as Motos
-GET http://localhost:5026/api/mottu
-Accept: application/json
+### Listar Motos com paginação
+GET https://localhost:7039/api/v1/Moto/paginado?page=1&pageSize=5
+Authorization: Bearer SEU_TOKEN_AQUI
 
-###
+### Buscar Moto por ID
+GET https://localhost:7039/api/v1/Moto/{id}
+Authorization: Bearer SEU_TOKEN_AQUI
 
-### 🔹 Listar Motos com paginação
-GET http://localhost:5026/api/mottu/paginado?page=1&pageSize=5
-Accept: application/json
-
-###
-
-### 🔹 Buscar Moto por ID (com HATEOAS)
-GET http://localhost:5026/api/mottu/GUID-DA-MOTO
-Accept: application/json
-
-###
-
-### 🔹 Atualizar Moto
-PUT http://localhost:5026/api/mottu
+### Atualizar Moto
+PUT https://localhost:7039/api/v1/Moto
+Authorization: Bearer SEU_TOKEN_AQUI
 Content-Type: application/json
 
 {
-  "id": "GUID-DA-MOTO",
+  "id": "{idMoto}",
   "modelo": "CG 160 Fan Atualizada",
   "placa": "XYZ1D23",
   "zonaId": 1
 }
 
-###
+### Deletar Moto
+DELETE https://localhost:7039/api/v1/Moto/{id}
+Authorization: Bearer SEU_TOKEN_AQUI
 
-### 🔹 Deletar Moto por ID
-DELETE http://localhost:5026/api/mottu/GUID-DA-MOTO
-Accept: application/json
+
+### Predict ML
+POST https://localhost:7039/api/v1/Moto/predict
+Authorization: Bearer SEU_TOKEN_AQUI
+Content-Type: application/json
+
+{
+  "modelo": "Yamaha Fazer"
+}

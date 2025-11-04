@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MottuBusiness;
 using MottuModel;
@@ -5,7 +6,10 @@ using MottuModel;
 namespace MottuApi.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
+[Authorize]
+[Produces("application/json")]
 public class PatioController : ControllerBase
 {
     private readonly IPatioService _service;
@@ -15,82 +19,69 @@ public class PatioController : ControllerBase
         _service = service;
     }
 
-    /// <summary>
-    /// Lista todos os pátios cadastrados, incluindo suas zonas.
-    /// </summary>
-    /// <returns>Lista de pátios</returns>
     [HttpGet]
+    [ProducesResponseType(typeof(List<Patio>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public ActionResult<List<Patio>> ListarTodos()
-    {
-        return Ok(_service.ListarTodos());
-    }
+        => Ok(_service.ListarTodos());
 
-    /// <summary>
-    /// Lista os pátios com paginação.
-    /// </summary>
-    /// <param name="page">Número da página (inicia em 1)</param>
-    /// <param name="pageSize">Quantidade de itens por página</param>
-    /// <returns>Lista paginada de pátios</returns>
     [HttpGet("paginado")]
+    [ProducesResponseType(typeof(List<Patio>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public ActionResult<List<Patio>> ListarPaginado(int page = 1, int pageSize = 10)
-    {
-        return Ok(_service.ListarPaginado(page, pageSize));
-    }
+        => Ok(_service.ListarPaginado(page, pageSize));
 
-    /// <summary>
-    /// Busca um pátio por ID.
-    /// </summary>
-    /// <param name="id">ID do pátio</param>
-    /// <returns>Objeto pátio, se encontrado</returns>
     [HttpGet("{id}")]
-    public ActionResult<Patio> ObterPorId(Guid id)
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public ActionResult<object> ObterPorId(Guid id)
     {
         var patio = _service.ObterPorId(id);
-        if (patio == null)
-            return NotFound();
+        if (patio == null) return NotFound();
 
-        return Ok(patio);
+        var self = Url.Action(nameof(ObterPorId), new { id, version = "1" });
+        var update = Url.Action(nameof(Atualizar), new { version = "1" });
+        var delete = Url.Action(nameof(Remover), new { id, version = "1" });
+
+        return Ok(new
+        {
+            data = patio,
+            links = new[]
+            {
+                new { rel = "self",   href = self,   method = "GET" },
+                new { rel = "update", href = update, method = "PUT" },
+                new { rel = "delete", href = delete, method = "DELETE" }
+            }
+        });
     }
 
-    /// <summary>
-    /// Cria um novo pátio.
-    /// </summary>
-    /// <param name="patio">Dados do novo pátio</param>
-    /// <returns>Pátio criado</returns>
     [HttpPost]
+    [ProducesResponseType(typeof(Patio), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public ActionResult<Patio> Criar(Patio patio)
     {
         var criado = _service.Criar(patio);
-        return CreatedAtAction(nameof(ObterPorId), new { id = criado.Id }, criado);
+        return CreatedAtAction(nameof(ObterPorId), new { id = criado.Id, version="1" }, criado);
     }
 
-    /// <summary>
-    /// Atualiza um pátio existente.
-    /// </summary>
-    /// <param name="patio">Objeto com os dados atualizados</param>
-    /// <returns>NoContent se atualizado com sucesso</returns>
     [HttpPut]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public IActionResult Atualizar(Patio patio)
     {
         var atualizado = _service.Atualizar(patio);
-        if (!atualizado)
-            return NotFound();
-
+        if (!atualizado) return NotFound();
         return NoContent();
     }
 
-    /// <summary>
-    /// Remove um pátio pelo ID.
-    /// </summary>
-    /// <param name="id">ID do pátio</param>
-    /// <returns>NoContent se removido com sucesso</returns>
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public IActionResult Remover(Guid id)
     {
         var removido = _service.Remover(id);
-        if (!removido)
-            return NotFound();
-
+        if (!removido) return NotFound();
         return NoContent();
     }
 }

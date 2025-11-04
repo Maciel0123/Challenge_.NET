@@ -1,28 +1,53 @@
 # 📦 Challenge .NET – Mottu API
 
-Este projeto consiste em uma **API RESTful** desenvolvida com **ASP.NET Core**, voltada para o **gerenciamento de motos, zonas e pátios** da empresa Mottu. A API foi construída com boas práticas de arquitetura, integração com banco de dados Oracle via Entity Framework Core, e documentação completa via Swagger.
+Este projeto consiste em uma **API RESTful** desenvolvida com **ASP.NET Core 9**, voltada para o **gerenciamento de motos, zonas e pátios** da empresa Mottu. A API segue boas práticas REST, segurança com JWT, versionamento de API, Health Checks, uso de ML.NET para previsão e documentação detalhada via Swagger.
 
 ---
 
 ## 🎯 Entidades do Domínio
 
-As 3 entidades principais foram escolhidas por refletirem diretamente o fluxo logístico da empresa Mottu:
-
-- **Moto**: representa o ativo principal da empresa. Cada moto possui modelo, placa e está alocada em uma Zona.
-- **Zona**: representa uma subdivisão operacional de um Pátio, usada para organização física e controle de alocação das motos.
-- **Pátio**: estrutura física onde as motos são armazenadas. Cada pátio contém uma ou mais Zonas.
+- **Moto** → ativo principal da operação
+- **Zona** → subdivisão do pátio onde as motos são alocadas
+- **Pátio** → espaço físico que comporta várias zonas
 
 ---
 
-## 🚀 Funcionalidades
+## 🚀 Funcionalidades Implementadas
 
-- CRUD completo para Motos, Zonas e Pátios
-- Associação de Motos a Zonas e de Zonas a Pátios
-- Consultas com filtros (`QueryParams`, `PathParams`)
-- Paginação (`?page=1&pageSize=10`)
-- HATEOAS nas respostas `GET /{id}`
-- Retornos HTTP adequados (`200 OK`, `201 Created`, `204 No Content`, etc.)
-- Documentação via Swagger
+| Funcionalidade | Status |
+|----------------|--------|
+| CRUD completo (Moto, Zona, Pátio) | ✅ |
+| Versionamento de API (`/api/v1/...`) | ✅ |
+| Documentação via Swagger e OpenAPI | ✅ |
+| Segurança JWT com Auth Token | ✅ |
+| Endpoint de Health Check (`/health`) | ✅ |
+| ML.NET integrado (`/api/v1/moto/predict`) | ✅ |
+| Testes unitários com xUnit | ✅ |
+| Testes de integração com WebApplicationFactory | ✅ |
+
+---
+
+## 🧠 ML.NET dentro da API
+
+A API possui um modelo simples demonstrativo de Machine Learning que retorna uma **previsão de risco da moto** com base no modelo informado.
+
+Exemplo de uso:
+
+POST /api/v1/moto/predict
+
+```
+{
+  "modelo": "Yamaha Fazer"
+}
+```
+
+Retorno:
+
+{
+  "modelo": "Yamaha Fazer",
+  "risco": 0.75,
+  "categoria": "alto"
+}
 
 ---
 
@@ -33,9 +58,28 @@ Challenge_.NET<br>
 ├── Mottu.http # Requisições de teste para Postman ou REST Client<br>
 ├── MottuBusiness # Lógica de negócio e interfaces dos serviços<br>
 ├── MottuData # Acesso a dados e configuração do EF Core + Oracle<br>
-├── MottuModel # Modelos de dados (entidades)
+├── MottuModel # Modelos de dados (entidades)<br>
+├── MottuTestes # Camada de testes automatizados
 
 ---
+
+## 🔐 Autenticação JWT
+
+Gere o token:
+
+POST /api/v1/auth/token
+```
+{
+  "username": "gabi",
+  "password": "123"
+}
+```
+
+Copie o access_token recebido
+
+Clique em Authorize no Swagger e insira o token
+
+Após isso todos os endpoints protegidos estarão liberados para uso.
 
 ## 🛠️ Como Executar Localmente
 
@@ -43,32 +87,54 @@ Challenge_.NET<br>
 ```
 git clone https://github.com/Maciel0123/Challenge_.NET.git
 ```
-3. Abra a solução no Visual Studio ou VSCode.
+2. Abra a solução no Visual Studio ou VSCode.
 
-4. Atualize a connection string para o Oracle no appsettings.json ou na ApplicationDbContextFactory.cs.
+3. Atualize a connection string para o Oracle no appsettings.json ou na ApplicationDbContextFactory.cs.
 
-5. Gere o banco de dados (caso necessário):
+4. Gere o banco de dados (caso necessário):
 ```
 dotnet ef database update --project MottuData
 ```
-7. Rode o projeto WebAPI:
+5. Rode o projeto WebAPI:
 ```
 dotnet run --project MottuApi
 ```
-9. Acesse o Swagger:
+6. Acesse o Swagger:
 ```    
-https://localhost:{porta}/swagger
+https://localhost:7039/swagger
+```
+7. Health Check (não requer token):
+```
+https://localhost:7039/health
 ```
 
-##🧪 Testes de Requisições
+## 🧪 Testes de Requisições
 
 Você pode testar os endpoints usando:
 
-Swagger UI (/swagger)
+- Swagger UI (https://localhost:7039/swagger)
 
-REST Client (Mottu.http)
+- REST Client (Mottu.http)
 
-Postman
+- Postman: importar manualmente as rotas
+
+## 🧪 Testes Automatizados
+
+Projeto de testes: MottuTestes
+
+Para executar:
+
+```
+dotnet test
+```
+
+Os testes incluem:
+
+- Validação da lógica de domínio
+
+- Validação do ML.NET
+
+- Teste de integração do HealthCheck
 
 Extra:
 
@@ -77,54 +143,57 @@ Extra:
 - ASP.NET Core 9.0
 - Entity Framework Core 9
 - Oracle Database
+- ML.NET
+- JWT Authentication
 - Swagger / OpenAPI
-- C# moderno (`required`, `Guid`, `nullable`, etc.)
   
 ## 📌 Endpoints Principais
 
+### 🔸 Auth
+
+| Verbo | Rota                 | Descrição                                              |
+| ----- | -------------------- | ------------------------------------------------------ |
+| POST  | `/api/v1/auth/token` | Gera um token JWT para acesso aos endpoints protegidos |
+
 ### 🔸 Moto
 
-| Verbo  | Rota                       | Descrição                              |
-|--------|----------------------------|----------------------------------------|
-| POST   | `/api/mottu`               | Criar uma nova Moto                   |
-| GET    | `/api/mottu`               | Listar todas as Motos                 |
-| GET    | `/api/mottu/{id}`          | Buscar Moto por ID                    |
-| GET    | `/api/mottu/paginado`      | Listar Motos com paginação            |
-| PUT    | `/api/mottu`               | Atualizar Moto                        |
-| DELETE | `/api/mottu/{id}`          | Deletar Moto por ID                   |
+| Verbo  | Rota                    | Descrição                           |
+| ------ | ----------------------- | ----------------------------------- |
+| GET    | `/api/v1/Moto`          | Lista todas as motos                |
+| POST   | `/api/v1/Moto`          | Cria uma nova moto                  |
+| PUT    | `/api/v1/Moto`          | Atualiza os dados de uma moto       |
+| GET    | `/api/v1/Moto/paginado` | Lista motos com paginação           |
+| GET    | `/api/v1/Moto/{id}`     | Busca moto por ID                   |
+| DELETE | `/api/v1/Moto/{id}`     | Remove uma moto pelo ID             |
+| POST   | `/api/v1/Moto/predict`  | Prediz risco de manutenção (ML.NET) |
+
 
 
 ### 🔸 Zona
 
-| Verbo  | Rota                       | Descrição                             |
-|--------|----------------------------|---------------------------------------|
-| POST   | `/api/zona`                | Criar uma nova Zona                  |
-| GET    | `/api/zona`                | Listar todas as Zonas                |
-| GET    | `/api/zona?patioId={guid}` | Listar zonas de um pátio específico  |
-| GET    | `/api/zona/{id}`           | Buscar Zona por ID                   |
-| GET    | `/api/zona/paginado`       | Listar Zonas com paginação           |
-| PUT    | `/api/zona`                | Atualizar Zona                       |
-| DELETE | `/api/zona/{id}`           | Deletar Zona por ID                  |
+| Verbo  | Rota                           | Descrição                                     |
+| ------ | ------------------------------ | --------------------------------------------- |
+| GET    | `/api/v1/Zona`                 | Lista todas as zonas com seus relacionamentos |
+| POST   | `/api/v1/Zona`                 | Cria uma nova zona                            |
+| PUT    | `/api/v1/Zona`                 | Atualiza uma zona existente                   |
+| GET    | `/api/v1/Zona/paginado`        | Lista zonas com paginação                     |
+| GET    | `/api/v1/Zona/patio/{patioId}` | Lista zonas de um determinado pátio           |
+| GET    | `/api/v1/Zona/{id}`            | Busca zona por ID                             |
+| DELETE | `/api/v1/Zona/{id}`            | Remove uma zona pelo ID                       |
+
 
 ### 🔸 Pátio
 
-| Verbo  | Rota                       | Descrição                           |
-|--------|----------------------------|-------------------------------------|
-| POST   | `/api/patio`               | Criar um novo Pátio                |
-| GET    | `/api/patio`               | Listar todos os Pátios             |
-| GET    | `/api/patio/{id}`          | Buscar Pátio por ID                |
-| GET    | `/api/patio/paginado`      | Listar Pátios com paginação        |
-| PUT    | `/api/patio`               | Atualizar Pátio                    |
-| DELETE | `/api/patio/{id}`          | Deletar Pátio por ID               |
+| Verbo  | Rota                     | Descrição                                     |
+| ------ | ------------------------ | --------------------------------------------- |
+| GET    | `/api/v1/Patio`          | Lista todos os pátios cadastrados (com zonas) |
+| POST   | `/api/v1/Patio`          | Cria um novo pátio                            |
+| PUT    | `/api/v1/Patio`          | Atualiza pátio existente                      |
+| GET    | `/api/v1/Patio/paginado` | Lista pátios com paginação                    |
+| GET    | `/api/v1/Patio/{id}`     | Busca pátio por ID                            |
+| DELETE | `/api/v1/Patio/{id}`     | Remove um pátio pelo ID                       |
 
-📎 Observações
-
-- O projeto utiliza **migrations** para versionamento do banco de dados.
-- Todas as respostas **GET /{id}** retornam links de ação no padrão **HATEOAS**.
-- O código segue boas práticas de **arquitetura em camadas**.
-- A **paginação** foi implementada nas rotas de listagem de **Pátios**, **Zonas** e **Motos** com os parâmetros `page` e `pageSize` para controle de quantidade de resultados por página.
-
-Integrantes:
+## Integrantes:
 
 Gabriela Moguinho Gonçalves - RM556143<br>
 Henrique Maciel - RM556480<br>
